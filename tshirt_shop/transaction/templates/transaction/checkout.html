@@ -23,6 +23,8 @@
         <label class="product-line-price">Total</label>
     </div>
 
+    <div class="cart_info" data="{{cart_str}}" style="visibility: hidden"></div>
+    
     {% for key, value in cart.cart_items.items %}
         <div class="product">
             <div class="product-image">
@@ -67,6 +69,7 @@
         <button class="checkout">Checkout</button>
 
     </div>
+
 
   </main>
 </body>

@@ -1,16 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpRequest
+from json import JSONEncoder
 import json
         
 class CartItem:
-    def __init__(self, name: str, src: str, description: str, \
-        price: float, quantity: int) -> None:
-        self.name = name
-        self.src = src
-        self.description = description
-        self.price = price
-        self.quantity = quantity
-        self.total = quantity * price
+    def __init__(self, json_dic) -> None:
+        self.name = json_dic["name"]
+        self.src = json_dic["src"]
+        self.description = json_dic["description"]
+        self.price = json_dic["price"]
+        self.quantity = json_dic["quantity"]
+        self.total = json_dic["quantity"] * json_dic["price"]
         
     def update_quantity(self, quantity: int) -> None:
         # must update total after updating quanity of any cart items
@@ -19,11 +19,11 @@ class CartItem:
         self.total = round(quantity * self.price,2)
 
 class Cart:
-    def __init__(self, tax_rate: float, shipping_rate: float, cart_items: dict[CartItem]) -> None:
-        self.tax_rate = tax_rate
-        self.tax_rate_display = tax_rate * 100
-        self.shipping_rate = shipping_rate
-        self.cart_items = cart_items
+    def __init__(self, json_dic) -> None:
+        self.tax_rate = json_dic["tax_rate"]
+        self.tax_rate_display = json_dic["tax_rate"] * 100
+        self.shipping_rate = json_dic["shipping_rate"]
+        self.cart_items = json_dic["cart_items"]
         self.sub_total = 0
         self.tax = 0
         self.grand_total = 0
@@ -44,25 +44,36 @@ class Cart:
             self.tax = round(new_sub * self.tax_rate, 2)
             self.grand_total = round(new_sub + self.tax + self.shipping_rate, 2)
 
-cart_items = {
-        "Dingo Dog Bones": CartItem("Dingo Dog Bones", "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
-            "dogg", 12.99, 1),
-        "Nutro™ Adult Lamb and Rice Dog Food": CartItem("Nutro™ Adult Lamb and Rice Dog Food", \
-            "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
-                "weeeee", 45.99, 1)
-                }
-
-cart = Cart(0.05, 15, cart_items)
+class CartEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
 
 def checkout(request: HttpRequest) -> HttpResponse:
-    context = {'cart': cart}
+
+    # initial cart for html template. The current cart information is stored in the cart_str attribute!
+    cart_items = {
+        "Dingo Dog Bones": CartItem({"name": "Dingo Dog Bones", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
+            "description": "dogg", "price": 12.99, "quantity": 1}),
+        "Nutro™ Adult Lamb and Rice Dog Food": CartItem({"name": "Nutro™ Adult Lamb and Rice Dog Food", \
+            "src": "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
+                "description": "weeeee", "price": 45.99, "quantity": 1})
+                }
+
+    cart = Cart({"tax_rate":0.05, "shipping_rate":15, "cart_items":cart_items})
+
+    context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
     return render(request, 'transaction/checkout.html', context)
 
 def quantity_change(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
            item_val = request.GET['item_val']
+           cart = json.loads(request.GET['cart'])
 
+           for item in cart["cart_items"]:
+               cart["cart_items"][item] = CartItem(cart["cart_items"][item])
+           cart = Cart(cart)
+           
            cart.cart_items[item_name].update_quantity(int(item_val))
            cart.update_total()
            
@@ -72,6 +83,7 @@ def quantity_change(request: HttpRequest) -> HttpResponse:
                'tax': cart.tax,
                'shipping': 0 if cart.sub_total == 0 else cart.shipping_rate,
                'grand_total': cart.grand_total,
+               'cart_str': json.dumps(cart, indent=4, cls=CartEncoder),
            }
            return HttpResponse(json.dumps(context))
     else:
@@ -80,7 +92,12 @@ def quantity_change(request: HttpRequest) -> HttpResponse:
 def remove_item(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
+           cart = json.loads(request.GET['cart'])
 
+           for item in cart["cart_items"]:
+               cart["cart_items"][item] = CartItem(cart["cart_items"][item])
+           cart = Cart(cart)
+        
            cart.cart_items[item_name].update_quantity(0)
            cart.update_total()
            
@@ -89,6 +106,7 @@ def remove_item(request: HttpRequest) -> HttpResponse:
                'tax': cart.tax,
                'shipping': 0 if cart.sub_total == 0 else cart.shipping_rate,
                'grand_total': cart.grand_total,
+               'cart_str': json.dumps(cart, indent=4, cls=CartEncoder),
            }
            return HttpResponse(json.dumps(context))
     else:
