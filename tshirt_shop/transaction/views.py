@@ -93,3 +93,6 @@ def remove_item(request: HttpRequest) -> HttpResponse:
            return HttpResponse(json.dumps(context))
     else:
            return HttpResponse("Request method is not a GET")
+
+def fillout(request: HttpRequest) -> HttpResponse:
+    return render(request, 'transaction/card_fillout.html')
