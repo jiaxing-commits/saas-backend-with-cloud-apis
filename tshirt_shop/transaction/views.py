@@ -1,3 +1,4 @@
+from lite_models.models import Customer, Tshirt
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from json import JSONEncoder
@@ -55,11 +56,11 @@ def checkout(request: HttpRequest) -> HttpResponse:
     else:
         # initial cart for html template. The current cart information is stored in the cart_str attribute!
         cart_items = {
-            "Dingo Dog Bones": CartItem({"name": "Dingo Dog Bones", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
-                "description": "dogg", "price": 12.99, "quantity": 1}),
-            "Nutro™ Adult Lamb and Rice Dog Food": CartItem({"name": "Nutro™ Adult Lamb and Rice Dog Food", \
+            "Red T-shirt": CartItem({"name": "Red T-shirt", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
+                "description": "It is red", "price": 12.99, "quantity": 1}),
+            "Green T-shirt": CartItem({"name": "Green T-shirt", \
                 "src": "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
-                    "description": "weeeee", "price": 45.99, "quantity": 1})
+                    "description": "It is green", "price": 45.99, "quantity": 1})
                     }
 
         cart = Cart({"tax_rate":0.05, "shipping_rate":15, "cart_items":cart_items})
@@ -121,4 +122,32 @@ def fillout(request: HttpRequest) -> HttpResponse:
     for item in cart["cart_items"]:
         cart["cart_items"][item] = CartItem(cart["cart_items"][item])
     cart = Cart(cart)
-    return render(request, 'transaction/card_fillout.html')
+
+    context = {'cart': cart}
+    return render(request, 'transaction/card_fillout.html', context=context)
+
+def restock(request: HttpRequest) -> HttpRequest:
+    items = {
+        "Red T-shirt": {
+            "price": 12.99,
+            "inventory": 30,
+        },
+        "Yellow T-shirt": {
+            "price": 45.99,
+            "inventory": 10,
+        }
+    }
+    
+    for item_name in items:
+        if Tshirt.objects.filter(tshirt_name=item_name).exists():
+            item = Tshirt.objects.get(tshirt_name=item_name)
+            item.inventory = items[item_name]["inventory"]
+        else:
+            item = Tshirt(tshirt_name=item_name, price=items[item_name]["price"], inventory=items[item_name]["inventory"])
+        item.save()
+
+    return render(request, 'transaction/restock.html')
+
+def stock(request: HttpRequest) -> HttpRequest:
+    context = {'inventory': list(Tshirt.objects.all())}
+    return render(request, 'transaction/stock.html', context=context)
