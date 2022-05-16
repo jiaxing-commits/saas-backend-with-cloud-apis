@@ -48,18 +48,75 @@
               <label for="phone"><i class="fa fa-phone"></i> Phone</label>
               <input type="tel" id="phone" name="phone" pattern="\d*" placeholder="312-543-1234" required>
               <label for="adr"><i class="fa fa-address-card-o"></i> Shipping Address</label>
-              <input type="text" id="adr" name="address" placeholder="542 W. 15th Street" required>
+              <input type="text" id="shipping_address" name="shipping_address" placeholder="542 W. 15th Street" required>
               <label for="city"><i class="fa fa-institution"></i> Shipping City</label>
-              <input type="text" id="city" name="city" placeholder="New York" required>
+              <input type="text" id="shipping_city" name="shipping_city" placeholder="New York" required>
   
               <div class="row">
                 <div class="col-50">
                   <label for="state">Shipping State</label>
-                  <input type="text" id="state" name="state" placeholder="NY" required>
+                  <select id="shipping_state" name="shipping_state" placeholder="NY" required>
+                    <option>ALABAMA	(AL)</option>
+                    <option>ALASKA	(AK)</option>
+                    <option>AMERICAN SAMOA	(AS)</option>
+                    <option>ARIZONA	(AZ)</option>
+                    <option>ARKANSAS	(AR)</option>
+                    <option>CALIFORNIA	(CA)</option>
+                    <option>COLORADO	(CO)</option>
+                    <option>CONNECTICUT	(CT)</option>
+                    <option>DELAWARE	(DE)</option>
+                    <option>DISTRICT OF COLUMBIA	(DC)</option>
+                    <option>FLORIDA	(FL)</option>
+                    <option>GEORGIA	(GA)</option>
+                    <option>GUAM	(GU)</option>
+                    <option>HAWAII	(HI)</option>
+                    <option>IDAHO	(ID)</option>
+                    <option>ILLINOIS	(IL)</option>
+                    <option>INDIANA	(IN)</option>
+                    <option>IOWA	(IA)</option>
+                    <option>KANSAS	(KS)</option>
+                    <option>KENTUCKY	(KY)</option>
+                    <option>LOUISIANA	(LA)</option>
+                    <option>MAINE	(ME)</option>
+                    <option>MARYLAND	(MD)</option>
+                    <option>MASSACHUSETTS	(MA)</option>
+                    <option>MICHIGAN	(MI)</option>
+                    <option>MINNESOTA	(MN)</option>
+                    <option>MISSISSIPPI	(MS)</option>
+                    <option>MISSOURI	(MO)</option>
+                    <option>MONTANA	(MT)</option>
+                    <option>NEBRASKA	(NE)</option>
+                    <option>NEVADA	(NV)</option>
+                    <option>NEW HAMPSHIRE	(NH)</option>
+                    <option>NEW JERSEY	(NJ)</option>
+                    <option>NEW MEXICO	(NM)</option>
+                    <option>NEW YORK	(NY)</option>
+                    <option>NORTH CAROLINA	(NC)</option>
+                    <option>NORTH DAKOTA	(ND)</option>
+                    <option>NORTHERN MARIANA IS	(MP)</option>
+                    <option>OHIO	(OH)</option>
+                    <option>OKLAHOMA	(OK)</option>
+                    <option>OREGON	(OR)</option>
+                    <option>PENNSYLVANIA	(PA)</option>
+                    <option>PUERTO RICO	(PR)</option>
+                    <option>RHODE ISLAND	(RI)</option>
+                    <option>SOUTH CAROLINA	(SC)</option>
+                    <option>SOUTH DAKOTA	(SD)</option>
+                    <option>TENNESSEE	(TN)</option>
+                    <option>TEXAS	(TX)</option>
+                    <option>UTAH	(UT)</option>
+                    <option>VERMONT	(VT)</option>
+                    <option>VIRGINIA	(VA)</option>
+                    <option>VIRGIN ISLANDS	(VI)</option>
+                    <option>WASHINGTON	(WA)</option>
+                    <option>WEST VIRGINIA	(WV)</option>
+                    <option>WISCONSIN	(WI)</option>
+                    <option>WYOMING	(WY)</option>
+                  </select>
                 </div>
                 <div class="col-50">
                   <label for="zip">Shipping Zip</label>
-                  <input type="text" id="zip" name="zip" placeholder="10001" required>
+                  <input type="text" id="zip" name="zip" placeholder="10001" maxlength="5"required>
                 </div>
               </div>
             </div>
@@ -91,18 +148,75 @@
               </div>
 
               <label for="adr"><i class="fa fa-address-card-o"></i> Billing Address</label>
-              <input type="text" id="adr" name="address" placeholder="542 W. 15th Street" required>
+              <input type="text" id="billing_address" name="billing_address" placeholder="542 W. 15th Street" required>
               <label for="city"><i class="fa fa-institution"></i> Billing City</label>
-              <input type="text" id="city" name="city" placeholder="New York" required>
+              <input type="text" id="billing_city" name="billing_city" placeholder="New York" required>
   
               <div class="row">
                 <div class="col-50">
                   <label for="state">Billing State</label>
-                  <input type="text" id="state" name="state" placeholder="NY" required>
+                    <select id="billing_state" name="billing_state" placeholder="NY" required>
+                      <option>ALABAMA	(AL)</option>
+                      <option>ALASKA	(AK)</option>
+                      <option>AMERICAN SAMOA	(AS)</option>
+                      <option>ARIZONA	(AZ)</option>
+                      <option>ARKANSAS	(AR)</option>
+                      <option>CALIFORNIA	(CA)</option>
+                      <option>COLORADO	(CO)</option>
+                      <option>CONNECTICUT	(CT)</option>
+                      <option>DELAWARE	(DE)</option>
+                      <option>DISTRICT OF COLUMBIA	(DC)</option>
+                      <option>FLORIDA	(FL)</option>
+                      <option>GEORGIA	(GA)</option>
+                      <option>GUAM	(GU)</option>
+                      <option>HAWAII	(HI)</option>
+                      <option>IDAHO	(ID)</option>
+                      <option>ILLINOIS	(IL)</option>
+                      <option>INDIANA	(IN)</option>
+                      <option>IOWA	(IA)</option>
+                      <option>KANSAS	(KS)</option>
+                      <option>KENTUCKY	(KY)</option>
+                      <option>LOUISIANA	(LA)</option>
+                      <option>MAINE	(ME)</option>
+                      <option>MARYLAND	(MD)</option>
+                      <option>MASSACHUSETTS	(MA)</option>
+                      <option>MICHIGAN	(MI)</option>
+                      <option>MINNESOTA	(MN)</option>
+                      <option>MISSISSIPPI	(MS)</option>
+                      <option>MISSOURI	(MO)</option>
+                      <option>MONTANA	(MT)</option>
+                      <option>NEBRASKA	(NE)</option>
+                      <option>NEVADA	(NV)</option>
+                      <option>NEW HAMPSHIRE	(NH)</option>
+                      <option>NEW JERSEY	(NJ)</option>
+                      <option>NEW MEXICO	(NM)</option>
+                      <option>NEW YORK	(NY)</option>
+                      <option>NORTH CAROLINA	(NC)</option>
+                      <option>NORTH DAKOTA	(ND)</option>
+                      <option>NORTHERN MARIANA IS	(MP)</option>
+                      <option>OHIO	(OH)</option>
+                      <option>OKLAHOMA	(OK)</option>
+                      <option>OREGON	(OR)</option>
+                      <option>PENNSYLVANIA	(PA)</option>
+                      <option>PUERTO RICO	(PR)</option>
+                      <option>RHODE ISLAND	(RI)</option>
+                      <option>SOUTH CAROLINA	(SC)</option>
+                      <option>SOUTH DAKOTA	(SD)</option>
+                      <option>TENNESSEE	(TN)</option>
+                      <option>TEXAS	(TX)</option>
+                      <option>UTAH	(UT)</option>
+                      <option>VERMONT	(VT)</option>
+                      <option>VIRGINIA	(VA)</option>
+                      <option>VIRGIN ISLANDS	(VI)</option>
+                      <option>WASHINGTON	(WA)</option>
+                      <option>WEST VIRGINIA	(WV)</option>
+                      <option>WISCONSIN	(WI)</option>
+                      <option>WYOMING	(WY)</option>
+                    </select>
                 </div>
                 <div class="col-50">
                   <label for="zip">Billing Zip</label>
-                  <input type="text" id="zip" name="zip" placeholder="10001" required>
+                  <input type="text" id="billing_zip" name="billing_zip" placeholder="10001" maxlength="5" required>
                 </div>
             </div>
   
