@@ -5,7 +5,7 @@ $(function(){
         var item_name = $(this).attr("item-name");
         var item_val = this.value;
         var tag = this;
-        var cart = $(this).parent().parent().parent().children(".cart_info").attr("data");
+        var cart = $(this).parent().parent().parent().children(".cart_info").children(".checkout").attr("value");
 
         $.ajax(
         {
@@ -22,7 +22,7 @@ $(function(){
                 var t = $(tag).parent().parent();
                 
                 // update cart info
-                $(tag).parent().parent().parent().children(".cart_info").attr("data", obj['cart_str']);
+                $(tag).parent().parent().parent().children(".cart_info").children(".checkout").attr("value", obj['cart_str']);
         
                 t.children(".product-line-price").each(function () {
                     $(this).fadeOut(fade_time, function() {
@@ -59,7 +59,7 @@ $(function(){
         var productRow = $(this).parent().parent();
         var item_name = $(this).attr("item-name");
         var tag = this;
-        var cart = $(this).parent().parent().parent().children(".cart_info").attr("data");
+        var cart = $(this).parent().parent().parent().children(".cart_info").children(".checkout").attr("value");
 
         productRow.slideUp(fade_time, function() {
             productRow.remove();
@@ -79,7 +79,7 @@ $(function(){
                     var t = $(tag).parent().parent().parent().children(".totals").children(".totals-item");
                     
                     // update cart info
-                    $(tag).parent().parent().parent().children(".cart_info").attr("data", obj['cart_str']);
+                    $(tag).parent().parent().parent().children(".cart_info").children(".checkout").attr("value", obj['cart_str']);
 
                     t.children("#cart-subtotal").each(function () {
                         $(this).fadeOut(fade_time, function() {

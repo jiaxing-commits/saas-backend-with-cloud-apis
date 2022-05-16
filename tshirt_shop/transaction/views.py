@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from json import JSONEncoder
 import json
@@ -49,20 +49,23 @@ class CartEncoder(JSONEncoder):
         return o.__dict__
 
 def checkout(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        request.session['cart_info'] = request.POST["cart_info"]
+        return redirect('/../fillout')
+    else:
+        # initial cart for html template. The current cart information is stored in the cart_str attribute!
+        cart_items = {
+            "Dingo Dog Bones": CartItem({"name": "Dingo Dog Bones", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
+                "description": "dogg", "price": 12.99, "quantity": 1}),
+            "Nutro™ Adult Lamb and Rice Dog Food": CartItem({"name": "Nutro™ Adult Lamb and Rice Dog Food", \
+                "src": "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
+                    "description": "weeeee", "price": 45.99, "quantity": 1})
+                    }
 
-    # initial cart for html template. The current cart information is stored in the cart_str attribute!
-    cart_items = {
-        "Dingo Dog Bones": CartItem({"name": "Dingo Dog Bones", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
-            "description": "dogg", "price": 12.99, "quantity": 1}),
-        "Nutro™ Adult Lamb and Rice Dog Food": CartItem({"name": "Nutro™ Adult Lamb and Rice Dog Food", \
-            "src": "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
-                "description": "weeeee", "price": 45.99, "quantity": 1})
-                }
+        cart = Cart({"tax_rate":0.05, "shipping_rate":15, "cart_items":cart_items})
 
-    cart = Cart({"tax_rate":0.05, "shipping_rate":15, "cart_items":cart_items})
-
-    context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
-    return render(request, 'transaction/checkout.html', context)
+        context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
+        return render(request, 'transaction/checkout.html', context)
 
 def quantity_change(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
@@ -113,4 +116,9 @@ def remove_item(request: HttpRequest) -> HttpResponse:
            return HttpResponse("Request method is not a GET")
 
 def fillout(request: HttpRequest) -> HttpResponse:
+    cart = json.loads(request.session['cart_info'])
+
+    for item in cart["cart_items"]:
+        cart["cart_items"][item] = CartItem(cart["cart_items"][item])
+    cart = Cart(cart)
     return render(request, 'transaction/card_fillout.html')

@@ -22,8 +22,6 @@
         <label class="product-removal">Remove</label>
         <label class="product-line-price">Total</label>
     </div>
-
-    <div class="cart_info" data="{{cart_str}}" style="visibility: hidden"></div>
     
     {% for key, value in cart.cart_items.items %}
         <div class="product">
@@ -65,9 +63,9 @@
         <div class="totals-value" id="cart-total">{{cart.grand_total}}</div>
         </div>
     </div>
-        
-        <button class="checkout">Checkout</button>
-
+      <form class="cart_info" method="post">{% csrf_token %}
+        <button class="checkout" name="cart_info" value="{{cart_str}}">Checkout</button>
+      </form>
     </div>
 
 
