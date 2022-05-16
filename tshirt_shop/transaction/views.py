@@ -1,6 +1,7 @@
 from lite_models.models import Customer, Tshirt
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
+from django.db import transaction
 from json import JSONEncoder
 import json
         
@@ -117,6 +118,10 @@ def remove_item(request: HttpRequest) -> HttpResponse:
            return HttpResponse("Request method is not a GET")
 
 def fillout(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        # store data
+        return redirect('/../fulfillment')
+
     cart = json.loads(request.session['cart_info'])
 
     for item in cart["cart_items"]:
@@ -126,6 +131,21 @@ def fillout(request: HttpRequest) -> HttpResponse:
 
     context = {'cart': cart}
     return render(request, 'transaction/card_fillout.html', context=context)
+
+# use transaction and select_for_update to lock operating rows to deal with race conditions
+@transaction.commit_manually()
+def fulfillment(request: HttpRequest) -> HttpRequest:
+    success = False
+    # get data
+
+    #check stripe
+
+    #check inventory
+
+    if success:
+        return render(request, 'transaction/success_fulfill.html')
+    else:
+        return render(request, 'transaction/unsuccess_fulfill.html')
 
 def reset(request: HttpRequest) -> HttpRequest:
     Tshirt.objects.all().delete()
