@@ -122,9 +122,14 @@ def fillout(request: HttpRequest) -> HttpResponse:
     for item in cart["cart_items"]:
         cart["cart_items"][item] = CartItem(cart["cart_items"][item])
     cart = Cart(cart)
+    print(cart.cart_items)
 
     context = {'cart': cart}
     return render(request, 'transaction/card_fillout.html', context=context)
+
+def reset(request: HttpRequest) -> HttpRequest:
+    Tshirt.objects.all().delete()
+    return render(request, 'transaction/reset.html')
 
 def restock(request: HttpRequest) -> HttpRequest:
     items = {
@@ -132,7 +137,7 @@ def restock(request: HttpRequest) -> HttpRequest:
             "price": 12.99,
             "inventory": 30,
         },
-        "Yellow T-shirt": {
+        "Green T-shirt": {
             "price": 45.99,
             "inventory": 10,
         }

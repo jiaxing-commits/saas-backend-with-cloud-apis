@@ -20,13 +20,16 @@
                 <b>{{ total_quanity }}</b>
               </span>
             </h4>
-    
-            {% for key, value in cart.items %}
-                <p><b>{{ key }}({{ value.0 }})</b> <span class="price">{{ value.1 }}</span></p>
+            
+            {% for key, value in cart.cart_items.items %}
+                <p><b>{{ key }}({{ value.quantity }})</b> <span class="price">{{ value.total }}</span></p>
             {% endfor %}
+            <p><b>Subtotal</b> <span class="price">{{ cart.sub_total }}</span></p>
+            <p><b>Tax</b> <span class="price">{{ cart.tax }}</span></p>
+            <p><b>Shipping</b> <span class="price">{{ cart.shipping_rate }}</span></p>
     
             <hr>
-            <p>Total <span class="price" style="color:black"><b>${{ total_price }}</b></span></p>
+            <p>Total <span class="price" style="color:black"><b>${{ cart.grand_total }}</b></span></p>
           </div>
 
           <div class="row">
