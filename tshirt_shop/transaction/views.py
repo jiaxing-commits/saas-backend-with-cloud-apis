@@ -120,6 +120,7 @@ def remove_item(request: HttpRequest) -> HttpResponse:
 def fillout(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         # store data
+        print(request.POST)
         return redirect('/../fulfillment')
 
     cart = json.loads(request.session['cart_info'])
@@ -133,14 +134,19 @@ def fillout(request: HttpRequest) -> HttpResponse:
     return render(request, 'transaction/card_fillout.html', context=context)
 
 # use transaction and select_for_update to lock operating rows to deal with race conditions
-@transaction.commit_manually()
 def fulfillment(request: HttpRequest) -> HttpRequest:
     success = False
     # get data
-
+    
     #check stripe
 
     #check inventory
+    # entries = Tshirt.objects.select_for_update().filter(author=request.user)
+    with transaction.atomic():
+        # for entry in entries:
+        #     pass
+        pass
+
 
     if success:
         return render(request, 'transaction/success_fulfill.html')
