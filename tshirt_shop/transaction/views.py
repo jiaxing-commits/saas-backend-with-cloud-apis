@@ -60,12 +60,14 @@ def checkout(request: HttpRequest) -> HttpResponse:
         request.session['cart_info'] = request.POST["cart_info"]
         return redirect('/../fillout')
     else:
+
+        # this is hard coded. could have pull all items from the database.
         # initial cart for html template. The current cart information is stored in the cart_str attribute!
         cart_items = {
-            "Red T-shirt": CartItem({"name": "Red T-shirt", "src": "https://s.cdpn.io/3/dingo-dog-bones.jpg", \
+            "Red T-shirt": CartItem({"name": "Red T-shirt", "src": "https://tinyurl.com/4xnu8swb", \
                 "description": "It is red", "price": 12.99, "quantity": 1}),
             "Green T-shirt": CartItem({"name": "Green T-shirt", \
-                "src": "https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png", \
+                "src": "https://tinyurl.com/2p82jwht", \
                     "description": "It is green", "price": 45.99, "quantity": 1})
                     }
 
