@@ -1,4 +1,3 @@
 # saas-backend-with-cloud-apis
-Build SaaS backends with cloud APIs
 
-A list of real life problems to `program the cloud`, instead of `run programs on cloud`
+1. ```bash pip3 install -r requirements.txt```
