@@ -27,7 +27,7 @@ class Customer(models.Model):
     city = models.CharField(max_length=35)
     state = models.CharField(max_length=35)
     postal_code = models.CharField(validators=[MinLengthValidator(5), only_numbers] ,max_length=5)
-    phone = PhoneNumberField(null=False, blank=False, unique=True)
+    phone = PhoneNumberField(null=False, blank=False)
     email = models.EmailField(max_length=320, unique=True)
     order_list = models.CharField(max_length=1000) # str list with comma delimiter Ex: "item_id1 quanitity1, item_id2 quanitity2, ..."
     order_total = models.FloatField(validators=[MinValueValidator(0.0)])
@@ -36,4 +36,4 @@ class Customer(models.Model):
     charge_success = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return f'Name: {self.first_name} {self.last_name}, Customer Id: {str(self.customer_id)}, Order: {self.order_list}'
+        return f'Name: {self.first_name} {self.last_name}, Customer Id: {str(self.customer_id)}, Charge_success: {self.charge_success}, Order: {self.order_list}'

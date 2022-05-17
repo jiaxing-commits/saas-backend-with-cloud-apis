@@ -7,6 +7,7 @@ urlpatterns = [
     path('fillout/', views.fillout, name='fillout'),
     path('restock/', views.restock, name='restock'),
     path('stock/', views.stock, name='stock'),
+    path('customers/', views.customers, name='customers'),
     path('reset/', views.reset, name='reset'),
     path('config/', views.stripe_config, name='config'),
     path('stripe_session/', views.stripe_session, name='stripe_session'),

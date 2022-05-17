@@ -28,7 +28,7 @@ $(function () {
                     },
                     success: function( data ) 
                     {
-                        if(data['error'] = 'no inventory'){
+                        if(data['error'] == 'no inventory'){
                             window.location.replace(data['reroute']);
                             return
                         }

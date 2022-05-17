@@ -54,6 +54,7 @@ class CartEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
+# checkout page 
 def checkout(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         request.session['cart_info'] = request.POST["cart_info"]
@@ -73,6 +74,7 @@ def checkout(request: HttpRequest) -> HttpResponse:
         context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
         return render(request, 'transaction/checkout.html', context)
 
+# change quantity dynamically on checkout page
 def quantity_change(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
@@ -94,6 +96,7 @@ def quantity_change(request: HttpRequest) -> HttpResponse:
     else:
            return HttpResponse("Request method is not a GET")
 
+# remove item on checkout page
 def remove_item(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
@@ -113,6 +116,7 @@ def remove_item(request: HttpRequest) -> HttpResponse:
     else:
            return HttpResponse("Request method is not a GET")
 
+# fillout page for customer info
 def fillout(request: HttpRequest) -> HttpResponse:
     cart = cart_str_tojson(request.session['cart_info'])
 
@@ -126,10 +130,12 @@ def fillout(request: HttpRequest) -> HttpResponse:
     context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
     return render(request, 'transaction/card_fillout.html', context=context)
 
+# drops all tshirts from the tshirt table
 def reset(request: HttpRequest) -> HttpRequest:
     Tshirt.objects.all().delete()
     return render(request, 'transaction/reset.html')
 
+# restocks all tshirts
 def restock(request: HttpRequest) -> HttpRequest:
     items = {
         "Red T-shirt": {
@@ -152,11 +158,19 @@ def restock(request: HttpRequest) -> HttpRequest:
 
     return render(request, 'transaction/restock.html')
 
+# shows all tshirts in inventory
 def stock(request: HttpRequest) -> HttpRequest:
 
     context = {'inventory': list(Tshirt.objects.all())}
     return render(request, 'transaction/stock.html', context=context)
 
+# shows all customers
+def customers(request: HttpRequest) -> HttpRequest:
+
+    context = {'customers': list(Customer.objects.all())}
+    return render(request, 'transaction/customers.html', context=context)
+
+# converts json string into Cart Class
 def cart_str_tojson(json_string: str) -> Cart:
     cart = json.loads(json_string)
 
@@ -165,12 +179,14 @@ def cart_str_tojson(json_string: str) -> Cart:
     cart = Cart(cart)
     return cart
 
+# gets public key for stripe instance
 @csrf_exempt
 def stripe_config(request: HttpRequest) -> JsonResponse:
     if request.method == 'GET':
         stripe_config = {'publicKey': settings.STRIPE_PUBLISHABLE_KEY}
         return JsonResponse(stripe_config, safe=False)
 
+# blocking check for inventory and then starts stripe session
 @csrf_exempt
 def stripe_session(request):
     if request.method == 'GET':
@@ -234,8 +250,10 @@ def stripe_session(request):
         new_customer.save()
         return JsonResponse({'error': "no inventory", 'reroute':f"{domain_url}unsuccess_fulfill/"})
 
+# success page
 def success_fulfill(request: HttpRequest) -> HttpRequest:
     return render(request, 'transaction/success_fulfill.html')
 
+# not success page
 def unsuccess_fulfill(request: HttpRequest) -> HttpRequest:
     return render(request, 'transaction/unsuccess_fulfill.html')
