@@ -28,7 +28,10 @@ $(function () {
                     },
                     success: function( data ) 
                     {
-                        // var obj = JSON.parse(data);
+                        if(data['error'] = 'no inventory'){
+                            window.location.replace(data['reroute']);
+                            return
+                        }
                         return stripe.redirectToCheckout({sessionId: data.sessionId})
                     }
                 })

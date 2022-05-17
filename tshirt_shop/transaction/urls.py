@@ -10,6 +10,8 @@ urlpatterns = [
     path('reset/', views.reset, name='reset'),
     path('config/', views.stripe_config, name='config'),
     path('stripe_session/', views.stripe_session, name='stripe_session'),
+    path('success_fulfill/', views.success_fulfill, name='success_fulfill'),
+    path('unsuccess_fulfill/', views.unsuccess_fulfill, name='unsuccess_fulfill'),
     url(r'^quantity_change/$', views.quantity_change, name='quantity_change'),
     url(r'^remove_item/$', views.remove_item, name='remove_item'),
 ]

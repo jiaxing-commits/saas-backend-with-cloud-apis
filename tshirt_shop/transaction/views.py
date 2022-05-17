@@ -166,7 +166,7 @@ def cart_str_tojson(json_string: str) -> Cart:
     return cart
 
 @csrf_exempt
-def stripe_config(request):
+def stripe_config(request: HttpRequest) -> JsonResponse:
     if request.method == 'GET':
         stripe_config = {'publicKey': settings.STRIPE_PUBLISHABLE_KEY}
         return JsonResponse(stripe_config, safe=False)
@@ -176,6 +176,7 @@ def stripe_session(request):
     if request.method == 'GET':
         form_data = request.GET
         cart = cart_str_tojson(form_data["cart_info"])
+        domain_url = f"http://{request.META['HTTP_HOST']}/"
         
         if Customer.objects.filter(email=form_data["email"]).exists():
             new_customer = Customer.objects.get(email=form_data["email"])
@@ -215,13 +216,11 @@ def stripe_session(request):
                     tshirt.inventory -= cart.cart_items[item_name].quantity
                     tshirt.save()
                 
-                print(all_items)
-                domain_url = 'http://localhost:8000/'
                 stripe.api_key = settings.STRIPE_SECRET_KEY
                 try:
                     checkout_session = stripe.checkout.Session.create(
-                        success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
-                        cancel_url=domain_url + 'cancelled/',
+                        success_url=domain_url + 'success_fulfill?session_id={CHECKOUT_SESSION_ID}',
+                        cancel_url=domain_url + 'unsuccess_fulfill/',
                         payment_method_types=['card'],
                         mode='payment',
                         line_items=all_items
@@ -233,4 +232,10 @@ def stripe_session(request):
 
         new_customer.charge_success = False
         new_customer.save()
-        return JsonResponse({'error': 'not enough inventory'})
+        return JsonResponse({'error': "no inventory", 'reroute':f"{domain_url}unsuccess_fulfill/"})
+
+def success_fulfill(request: HttpRequest) -> HttpRequest:
+    return render(request, 'transaction/success_fulfill.html')
+
+def unsuccess_fulfill(request: HttpRequest) -> HttpRequest:
+    return render(request, 'transaction/unsuccess_fulfill.html')
