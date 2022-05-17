@@ -73,11 +73,7 @@ def quantity_change(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
            item_val = request.GET['item_val']
-           cart = json.loads(request.GET['cart'])
-
-           for item in cart["cart_items"]:
-               cart["cart_items"][item] = CartItem(cart["cart_items"][item])
-           cart = Cart(cart)
+           cart = cart_str_tojson(request.GET['cart'])
            
            cart.cart_items[item_name].update_quantity(int(item_val))
            cart.update_total()
@@ -97,11 +93,7 @@ def quantity_change(request: HttpRequest) -> HttpResponse:
 def remove_item(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
            item_name = request.GET['item_name']
-           cart = json.loads(request.GET['cart'])
-
-           for item in cart["cart_items"]:
-               cart["cart_items"][item] = CartItem(cart["cart_items"][item])
-           cart = Cart(cart)
+           cart = cart_str_tojson(request.GET['cart'])
         
            cart.cart_items[item_name].update_quantity(0)
            cart.update_total()
@@ -120,38 +112,42 @@ def remove_item(request: HttpRequest) -> HttpResponse:
 def fillout(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         # store data
-        print(request.POST)
+        request.session['form_data'] = request.POST
         return redirect('/../fulfillment')
 
-    cart = json.loads(request.session['cart_info'])
+    cart = cart_str_tojson(request.session['cart_info'])
 
-    for item in cart["cart_items"]:
-        cart["cart_items"][item] = CartItem(cart["cart_items"][item])
-    cart = Cart(cart)
-    print(cart.cart_items)
+    del_list = []
+    for item in cart.cart_items:
+        if cart.cart_items[item].quantity == 0: del_list.append(cart.cart_items[item].name)
+    
+    for delete_item in del_list:
+        del cart.cart_items[delete_item]
 
-    context = {'cart': cart}
+    context = {'cart': cart, 'cart_str': json.dumps(cart, indent=4, cls=CartEncoder)}
     return render(request, 'transaction/card_fillout.html', context=context)
 
 # use transaction and select_for_update to lock operating rows to deal with race conditions
 def fulfillment(request: HttpRequest) -> HttpRequest:
-    success = False
-    # get data
-    
+    form_data = request.session["form_data"]
+    cart = cart_str_tojson(form_data["cart_info"])
+   
+
+    def stripe_valid():
+        return True
+
     #check stripe
-
-    #check inventory
-    # entries = Tshirt.objects.select_for_update().filter(author=request.user)
-    with transaction.atomic():
-        # for entry in entries:
+    if stripe_valid():
+        #check inventory
+        # entries = Tshirt.objects.select_for_update().filter(author=request.user)
+        # with transaction.atomic():
+        #     for entry in entries:
+        #         pass
         #     pass
-        pass
-
-
-    if success:
+        
         return render(request, 'transaction/success_fulfill.html')
-    else:
-        return render(request, 'transaction/unsuccess_fulfill.html')
+
+    return render(request, 'transaction/unsuccess_fulfill.html')
 
 def reset(request: HttpRequest) -> HttpRequest:
     Tshirt.objects.all().delete()
@@ -180,5 +176,14 @@ def restock(request: HttpRequest) -> HttpRequest:
     return render(request, 'transaction/restock.html')
 
 def stock(request: HttpRequest) -> HttpRequest:
+
     context = {'inventory': list(Tshirt.objects.all())}
     return render(request, 'transaction/stock.html', context=context)
+
+def cart_str_tojson(json_string: str) -> Cart:
+    cart = json.loads(json_string)
+
+    for item in cart["cart_items"]:
+        cart["cart_items"][item] = CartItem(cart["cart_items"][item])
+    cart = Cart(cart)
+    return cart
