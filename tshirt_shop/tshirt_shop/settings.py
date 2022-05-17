@@ -121,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# djangostripe/settings.py
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51L0H4HCW6K2wSWAlPq7OQQHEl5mvKUCLCiXMR3cCoKQFtsoObcQpt6bF62w4up4xSIdf6kdd9kdGDofjJQxBn0hC004BE37iNz'
+STRIPE_SECRET_KEY = 'sk_test_51L0H4HCW6K2wSWAl7NNqRp0VDybO8P7L71xq5ChFRe5Ayz343QillxmgjrWQlYaiE1ViRncUVNaNMqCIJ7nwHLb600AKYy0Zun'

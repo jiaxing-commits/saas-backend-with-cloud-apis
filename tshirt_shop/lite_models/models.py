@@ -32,15 +32,6 @@ class Customer(models.Model):
     order_list = models.CharField(max_length=1000) # str list with comma delimiter Ex: "item_id1 quanitity1, item_id2 quanitity2, ..."
     order_total = models.FloatField(validators=[MinValueValidator(0.0)])
 
-    #Card Information
-    name_on_card = models.CharField(max_length=30)
-    credit_card_number = models.CharField(validators=[MinLengthValidator(16), only_numbers] , max_length=16)
-    cvv_number = models.CharField(validators=[MinLengthValidator(3), only_numbers] ,max_length=3) 
-    billing_street = models.CharField(max_length=35)
-    billing_city = models.CharField(max_length=35)
-    billing_state = models.CharField(max_length=35)
-    billing_postal_code = models.CharField(validators=[MinLengthValidator(5), only_numbers], max_length=5)
-
     # success access to stripe
     charge_success = models.BooleanField(default=False)
 
