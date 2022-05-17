@@ -11,7 +11,7 @@ only_numbers = RegexValidator(
 # Create your models here.
 class Tshirt(models.Model):
     tshirt_id = models.AutoField(primary_key=True)
-    tshirt_name = models.CharField(max_length=30, unique=True)
+    tshirt_name = models.CharField(max_length=30)
     price = models.FloatField(validators=[MinValueValidator(0.0)])
     inventory = models.PositiveIntegerField(default=0)
 

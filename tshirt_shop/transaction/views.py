@@ -131,7 +131,28 @@ def fillout(request: HttpRequest) -> HttpResponse:
 def fulfillment(request: HttpRequest) -> HttpRequest:
     form_data = request.session["form_data"]
     cart = cart_str_tojson(form_data["cart_info"])
-   
+    
+    if Customer.objects.filter(email=form_data["email"]).exists():
+        new_customer = Customer.objects.get(email=form_data["email"])
+    else:
+        new_customer = Customer()
+        new_customer.first_name = form_data["firstname"]
+        new_customer.last_name = form_data["lastname"]
+        new_customer.street = form_data["shipping_address"] 
+        new_customer.city = form_data["shipping_city"]
+        new_customer.state = form_data["shipping_state"]
+        new_customer.postal_code = form_data["shipping_zip"]
+        new_customer.phone = form_data["phone"]
+        new_customer.email = form_data["email"]
+        new_customer.order_list = ",".join(list(cart.cart_items))
+        new_customer.order_total = cart.grand_total
+        new_customer.name_on_card = form_data["cardname"]
+        new_customer.credit_card_number = form_data["cardnumber"]
+        new_customer.cvv_number = form_data["credit-cvc"]
+        new_customer.billing_street = form_data["billing_address"]
+        new_customer.billing_city = form_data["billing_city"]
+        new_customer.billing_state = form_data["billing_state"]
+        new_customer.billing_postal_code = form_data["billing_zip"]
 
     def stripe_valid():
         return True
@@ -139,14 +160,26 @@ def fulfillment(request: HttpRequest) -> HttpRequest:
     #check stripe
     if stripe_valid():
         #check inventory
-        # entries = Tshirt.objects.select_for_update().filter(author=request.user)
-        # with transaction.atomic():
-        #     for entry in entries:
-        #         pass
-        #     pass
-        
-        return render(request, 'transaction/success_fulfill.html')
 
+        with transaction.atomic():
+            order_availability = True
+            for item_name in cart.cart_items:
+                tshirt = Tshirt.objects.select_for_update().get(tshirt_name=item_name)
+                if cart.cart_items[item_name].quantity > tshirt.inventory:
+                    order_availability = False
+            
+            if order_availability:
+                new_customer.charge_success = True
+                new_customer.save()
+
+                for item_name in cart.cart_items:
+                    tshirt = Tshirt.objects.select_for_update().get(tshirt_name=item_name)
+                    tshirt.inventory -= cart.cart_items[item_name].quantity
+                    tshirt.save()
+                return render(request, 'transaction/success_fulfill.html')
+
+    new_customer.charge_success = False
+    new_customer.save()
     return render(request, 'transaction/unsuccess_fulfill.html')
 
 def reset(request: HttpRequest) -> HttpRequest:
